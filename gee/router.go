@@ -3,7 +3,6 @@ package gee
 import (
 	"fmt"
 	"github.com/Godyu97/geeweb/common"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -26,7 +25,8 @@ func newRouter() *router {
 }
 
 func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
-	log.Printf("Route %4s - %s", method, pattern)
+	geeLogger.Info(method, pattern)
+	PanicInvalidPattern(pattern)
 	parts := parsePattern(pattern)
 	key := MakeRouterKey(method, pattern)
 	_, ok := r.roots[method]
@@ -80,4 +80,13 @@ func (r *router) handle(c *Context) {
 
 func MakeRouterKey(method string, pattern string) string {
 	return fmt.Sprintf("%s_%s", method, pattern)
+}
+
+func PanicInvalidPattern(pattern string) {
+	switch pattern {
+	case "":
+		panic("sobfeFTe PanicInvalidPattern")
+	default:
+		//addRouter
+	}
 }

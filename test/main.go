@@ -15,8 +15,5 @@ func main() {
 			fmt.Fprintf(ctx.Writer, "Header[%q] = %q\n", k, v)
 		}
 	})
-	mux.GET("/z", func(ctx *gee.Context) {
-		fmt.Fprintf(ctx.Writer, "%q", "xxx")
-	})
 	mux.Run(":9999")
 }
