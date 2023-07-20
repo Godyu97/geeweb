@@ -3,16 +3,22 @@ package gee
 import (
 	"github.com/Godyu97/geeweb/common"
 	"net/http"
+	"strings"
 )
 
 type Engine struct {
+	*RouterGroup
 	router *router
+	groups []*RouterGroup
 }
 
 func New() *Engine {
-	return &Engine{
+	mux := &Engine{
 		router: newRouter(),
 	}
+	mux.RouterGroup = &RouterGroup{engine: mux}
+	mux.groups = []*RouterGroup{mux.RouterGroup}
+	return mux
 }
 
 func (e *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
@@ -35,6 +41,13 @@ func (e *Engine) Run(addr string) error {
 }
 
 func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	middlewares := make([]HandlerFunc, 0)
+	for _, group := range e.groups {
+		if strings.HasPrefix(r.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, r)
+	c.handlers = middlewares
 	e.router.handle(c)
 }

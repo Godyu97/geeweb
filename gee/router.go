@@ -69,13 +69,15 @@ func (r *router) handle(c *Context) {
 		c.Params = params
 		key := MakeRouterKey(c.Method, n.pattern)
 		if handler, ok := r.handlers[key]; ok {
-			handler(c)
+			c.handlers = append(c.handlers, handler)
 		} else {
 			c.String(http.StatusInternalServerError, "500 aeDPRbPi: %s\n", c.Path)
 		}
 	} else {
 		c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
 	}
+	//中间件+业务函数 执行
+	c.Next()
 }
 
 func MakeRouterKey(method string, pattern string) string {
