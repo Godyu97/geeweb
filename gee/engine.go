@@ -25,6 +25,12 @@ func New() *Engine {
 	return mux
 }
 
+func Default() *Engine {
+	mux := New()
+	mux.Use(Logger(), Recovery())
+	return mux
+}
+
 func (e *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
 	e.router.addRoute(method, pattern, handler)
 }

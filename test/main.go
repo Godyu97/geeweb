@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	mux := gee.New()
+	mux := gee.Default()
 	mux.GET("/", func(ctx *gee.Context) {
 		fmt.Fprintf(ctx.Writer, "URL.Path = %q\n", ctx.Path)
 	})
@@ -45,6 +45,10 @@ func main() {
 	})
 	mux.GET("/css", func(c *gee.Context) {
 		c.HTML(http.StatusOK, "css.tmpl", nil)
+	})
+	mux.GET("/panic", func(ctx *gee.Context) {
+		names := []string{"geektutu"}
+		ctx.String(http.StatusOK, names[100])
 	})
 	mux.Run(":9999")
 }
