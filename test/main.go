@@ -15,5 +15,7 @@ func main() {
 			fmt.Fprintf(ctx.Writer, "Header[%q] = %q\n", k, v)
 		}
 	})
+	g := mux.Group("/v1")
+	g.Static("/assets", "./static/assets")
 	mux.Run(":9999")
 }
