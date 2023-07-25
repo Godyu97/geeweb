@@ -8,9 +8,10 @@ import (
 const ParamFilePath = "filepath"
 
 func (g *RouterGroup) createStaticHandler(pattern string, fs http.FileSystem) HandlerFunc {
-	absolutePath := path.Join(g.prefix, pattern)
+	reqPath := path.Join(g.prefix, pattern)
 	//用于提供文件服务
-	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	//StripPrefix 在fs处理请求时去掉前缀reqPath
+	fileServer := http.StripPrefix(reqPath, http.FileServer(fs))
 	return func(ctx *Context) {
 		file := ctx.Param(ParamFilePath)
 		//Check if file exists and/or if we have permission to access it
