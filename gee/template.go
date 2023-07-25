@@ -1,6 +1,8 @@
 package gee
 
 import (
+	"github.com/Godyu97/geeweb/common"
+	"html/template"
 	"net/http"
 	"path"
 )
@@ -31,4 +33,19 @@ func (g *RouterGroup) Static(pattern string, root string) {
 	handler := g.createStaticHandler(pattern, http.Dir(root))
 	urlPattern := path.Join(pattern, "/*"+ParamFilePath)
 	g.GET(urlPattern, handler)
+}
+
+func (e *Engine) SetHtmlFuncMap(funcMap template.FuncMap) {
+	e.htmlFuncMap = funcMap
+}
+func (e *Engine) LoadHTMLGlob(pattern string) {
+	e.htmlTemplates = template.Must(template.New("").Funcs(e.htmlFuncMap).ParseGlob(pattern))
+}
+
+func (c *Context) HTML(code int, name string, data any) {
+	c.SetHeader(common.ContentType, common.Html)
+	c.Status(code)
+	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
+		c.Fail(http.StatusInternalServerError, err)
+	}
 }

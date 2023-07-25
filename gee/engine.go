@@ -2,6 +2,7 @@ package gee
 
 import (
 	"github.com/Godyu97/geeweb/common"
+	"html/template"
 	"net/http"
 	"strings"
 )
@@ -10,6 +11,9 @@ type Engine struct {
 	*RouterGroup
 	router *router
 	groups []*RouterGroup
+	//html render
+	htmlTemplates *template.Template
+	htmlFuncMap   template.FuncMap
 }
 
 func New() *Engine {
@@ -49,5 +53,6 @@ func (e *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	c := newContext(w, r)
 	c.handlers = middlewares
+	c.engine = e
 	e.router.handle(c)
 }

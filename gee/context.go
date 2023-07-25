@@ -22,6 +22,8 @@ type Context struct {
 	// middleware
 	handlers []HandlerFunc
 	index    int
+	// engine
+	engine *Engine
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -74,8 +76,7 @@ func (c *Context) Data(code int, data []byte) {
 	c.Status(code)
 	c.Writer.Write(data)
 }
-func (c *Context) HTML(code int, html string) {
-	c.SetHeader(common.ContentType, common.Html)
-	c.Status(code)
-	c.Writer.Write([]byte(html))
+func (c *Context) Fail(code int, err error) {
+	c.index = len(c.handlers)
+	c.Json(code, H{"err": err.Error()})
 }
